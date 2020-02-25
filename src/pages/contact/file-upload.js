@@ -1,108 +1,122 @@
-import React from 'react'
-import { navigate } from 'gatsby-link'
-import Layout from '../../components/Layout'
+import React from "react";
+import { navigate } from "gatsby-link";
+import Button from "@material-ui/core/Button";
+import Box from "@material-ui/core/Box";
+import Container from "@material-ui/core/Container";
+import { makeStyles } from "@material-ui/core/styles";
+import TextField from "@material-ui/core/TextField";
+import Typography from "@material-ui/core/Typography";
+
+import Layout from "../../components/Layout";
+
+const useStyles = makeStyles(theme => ({
+  root: {
+    "& .MuiTextField-root": {
+      margin: `${theme.spacing(1)}px auto`,
+      display: "flex",
+      maxWidth: 400
+    }
+  },
+  textField: {
+    maxWidth: "400px"
+  },
+  uploadField: {
+    padding: "10px 0",
+    "& input": {
+      display: "none"
+    }
+  }
+}));
 
 function encode(data) {
-  const formData = new FormData()
+  const formData = new FormData();
 
   for (const key of Object.keys(data)) {
-    formData.append(key, data[key])
+    formData.append(key, data[key]);
   }
 
-  return formData
+  return formData;
 }
 
-export default class Contact extends React.Component {
-  constructor(props) {
-    super(props)
-    this.state = {}
-  }
+export default function Contact(props) {
+  const classes = useStyles();
+  const [value, setValue] = React.useState("");
 
-  handleChange = e => {
-    this.setState({ [e.target.name]: e.target.value })
-  }
+  const handleChange = e => {
+    setValue({ [e.target.name]: e.target.value });
+  };
 
-  handleAttachment = e => {
-    this.setState({ [e.target.name]: e.target.files[0] })
-  }
+  const handleAttachment = e => {
+    setValue({ [e.target.name]: e.target.files[0] });
+  };
 
-  handleSubmit = e => {
-    e.preventDefault()
-    const form = e.target
-    fetch('/', {
-      method: 'POST',
+  const handleSubmit = e => {
+    e.preventDefault();
+    const form = e.target;
+    fetch("/", {
+      method: "POST",
       body: encode({
-        'form-name': form.getAttribute('name'),
-        ...this.state,
-      }),
+        "form-name": form.getAttribute("name"),
+        ...value
+      })
     })
-      .then(() => navigate(form.getAttribute('action')))
-      .catch(error => alert(error))
-  }
+      .then(() => navigate(form.getAttribute("action")))
+      .catch(error => alert(error));
+  };
 
-  render() {
-    return (
-      <Layout>
-        <section className="section">
-          <div className="container">
-            <div className="content">
-              <h1>File Upload</h1>
-              <form
-                name="file-upload"
-                method="post"
-                action="/contact/thanks/"
-                data-netlify="true"
-                data-netlify-honeypot="bot-field"
-                onSubmit={this.handleSubmit}
-              >
-                {/* The `form-name` hidden field is required to support form submissions without JavaScript */}
-                <input type="hidden" name="form-name" value="file-upload" />
-                <div hidden>
-                  <label>
-                    Don’t fill this out:{' '}
-                    <input name="bot-field" onChange={this.handleChange} />
-                  </label>
-                </div>
-                <div className="field">
-                  <label className="label" htmlFor={'name'}>
-                    Your name
-                  </label>
-                  <div className="control">
-                    <input
-                      className="input"
-                      type={'text'}
-                      name={'name'}
-                      onChange={this.handleChange}
-                      id={'name'}
-                      required={true}
-                    />
-                  </div>
-                </div>
-                <div className="field">
-                  <div className="file">
-                    <label className="file-label">
-                      <input
-                        className="file-input"
-                        type="file"
-                        name="attachment"
-                        onChange={this.handleAttachment}
-                      />
-                      <span className="file-cta">
-                        <span className="file-label">Choose a file…</span>
-                      </span>
-                    </label>
-                  </div>
-                </div>
-                <div className="field">
-                  <button className="button is-link" type="submit">
-                    Send
-                  </button>
-                </div>
-              </form>
+  return (
+    <Layout>
+      <Box mx={2} my={5}>
+        <Container>
+          <Typography variant="h1">File Upload</Typography>
+          <form
+            name="file-upload"
+            method="post"
+            action="/contact/thanks/"
+            data-netlify="true"
+            data-netlify-honeypot="bot-field"
+            onSubmit={handleSubmit}
+          >
+            {/* The `form-name` hidden field is required to support form submissions without JavaScript */}
+            <input type="hidden" name="form-name" value="file-upload" />
+            <div hidden>
+              <TextField
+                id="bot-field"
+                label="Don’t fill this out"
+                onChange={handleChange}
+              />
             </div>
-          </div>
-        </section>
-      </Layout>
-    )
-  }
+            <div>
+              <TextField
+                id="name"
+                fullWidth
+                className={classes.textField}
+                label="Your name"
+                value={value}
+                onChange={handleChange}
+                required
+              />
+            </div>
+            <div className={classes.uploadField}>
+              <input
+                accept="image/*"
+                id="contained-button-file"
+                multiple
+                type="file"
+                onChange={handleAttachment}
+              />
+              <label htmlFor="contained-button-file">
+                <Button variant="contained" color="primary" component="span">
+                  Upload
+                </Button>
+              </label>
+            </div>
+            <Button variant="contained" color="primary" type="submit" fullWidth>
+              Send
+            </Button>
+          </form>
+        </Container>
+      </Box>
+    </Layout>
+  );
 }

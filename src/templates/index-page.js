@@ -1,10 +1,40 @@
-import React from 'react'
-import PropTypes from 'prop-types'
-import { Link, graphql } from 'gatsby'
+import React from "react";
+import PropTypes from "prop-types";
+import { Link, graphql } from "gatsby";
+import Container from "@material-ui/core/Container";
+import Typography from "@material-ui/core/Typography";
+import Box from "@material-ui/core/Box";
+import Button from "@material-ui/core/Button";
+import { makeStyles } from "@material-ui/core/styles";
 
-import Layout from '../components/Layout'
-import Features from '../components/Features'
-import BlogRoll from '../components/BlogRoll'
+import Layout from "../components/Layout";
+import Features from "../components/Features";
+import BlogRoll from "../components/BlogRoll";
+
+const useStyles = makeStyles(theme => ({
+  heroH1: {
+    fontSize: "3rem",
+    boxShadow: `rg${theme.palette.primary.main} 0.5rem 0px 0px, rg${theme.palette.primary.main} -0.5rem 0px 0px`,
+    backgroundColor: theme.palette.primary.main,
+    color: "white",
+    lineHeight: "1",
+    padding: "0.25em"
+  },
+  heroH2: {
+    fontSize: "2rem",
+    boxShadow: `rg${theme.palette.primary.main} 0.5rem 0px 0px, rg${theme.palette.primary.main} -0.5rem 0px 0px`,
+    backgroundColor: theme.palette.primary.main,
+    color: "white",
+    lineHeight: "1",
+    padding: "0.25em"
+  },
+  mainpitchTitle: {
+    fontSize: "3rem"
+  },
+  mainpitchDesc: {
+    fontSize: "1.2rem"
+  }
+}));
 
 export const IndexPageTemplate = ({
   image,
@@ -13,106 +43,88 @@ export const IndexPageTemplate = ({
   subheading,
   mainpitch,
   description,
-  intro,
-}) => (
-  <div>
-    <div
-      className="full-width-image margin-top-0"
-      style={{
-        backgroundImage: `url(${
-          !!image.childImageSharp ? image.childImageSharp.fluid.src : image
-        })`,
-        backgroundPosition: `top left`,
-        backgroundAttachment: `fixed`,
-      }}
-    >
-      <div
+  intro
+}) => {
+  const classes = useStyles();
+
+  return (
+    <div>
+      <Box
+        display="flex"
+        height="400px"
+        justifyContent="center"
+        alignItems="center"
         style={{
-          display: 'flex',
-          height: '150px',
-          lineHeight: '1',
-          justifyContent: 'space-around',
-          alignItems: 'left',
-          flexDirection: 'column',
+          backgroundImage: `url(${
+            !!image.childImageSharp ? image.childImageSharp.fluid.src : image
+          })`,
+          backgroundPosition: `top left`,
+          backgroundAttachment: `fixed`
         }}
       >
-        <h1
-          className="has-text-weight-bold is-size-3-mobile is-size-2-tablet is-size-1-widescreen"
-          style={{
-            boxShadow:
-              'rgb(255, 68, 0) 0.5rem 0px 0px, rgb(255, 68, 0) -0.5rem 0px 0px',
-            backgroundColor: 'rgb(255, 68, 0)',
-            color: 'white',
-            lineHeight: '1',
-            padding: '0.25em',
-          }}
+        <Box
+          display="flex"
+          height="150px"
+          justifyContent="space-around"
+          flexDirection="column"
+          alignItems="left"
         >
-          {title}
-        </h1>
-        <h3
-          className="has-text-weight-bold is-size-5-mobile is-size-5-tablet is-size-4-widescreen"
-          style={{
-            boxShadow:
-              'rgb(255, 68, 0) 0.5rem 0px 0px, rgb(255, 68, 0) -0.5rem 0px 0px',
-            backgroundColor: 'rgb(255, 68, 0)',
-            color: 'white',
-            lineHeight: '1',
-            padding: '0.25em',
-          }}
-        >
-          {subheading}
-        </h3>
-      </div>
+          <Typography variant="h1" mb={5} className={classes.heroH1}>
+            {title}
+          </Typography>
+          <Typography variant="h2" className={classes.heroH2}>
+            {subheading}
+          </Typography>
+        </Box>
+      </Box>
+      <Box mx={2} my={5}>
+        <Container>
+          <Typography
+            variant="h1"
+            className={classes.mainpitchTitle}
+            gutterBottom
+          >
+            {mainpitch.title}
+          </Typography>
+          <Typography
+            variant="h3"
+            className={classes.mainpitchDesc}
+            gutterBottom
+          >
+            {mainpitch.description}
+          </Typography>
+          <Typography variant="h3">{heading}</Typography>
+          <p>{description}</p>
+          <Features gridItems={intro.blurbs} />
+          <Box textAlign="center" mt={5}>
+            <Button
+              color="primary"
+              variant="outlined"
+              component={Link}
+              to="/products"
+            >
+              See all products
+            </Button>
+          </Box>
+          <Typography variant="h3" gutterBottom>
+            Latest stories
+          </Typography>
+          <BlogRoll />
+          <Box textAlign="center" mt={5}>
+            <Button
+              color="primary"
+              variant="outlined"
+              component={Link}
+              to="/blog"
+            >
+              Read more
+            </Button>
+          </Box>
+        </Container>
+      </Box>
     </div>
-    <section className="section section--gradient">
-      <div className="container">
-        <div className="section">
-          <div className="columns">
-            <div className="column is-10 is-offset-1">
-              <div className="content">
-                <div className="content">
-                  <div className="tile">
-                    <h1 className="title">{mainpitch.title}</h1>
-                  </div>
-                  <div className="tile">
-                    <h3 className="subtitle">{mainpitch.description}</h3>
-                  </div>
-                </div>
-                <div className="columns">
-                  <div className="column is-12">
-                    <h3 className="has-text-weight-semibold is-size-2">
-                      {heading}
-                    </h3>
-                    <p>{description}</p>
-                  </div>
-                </div>
-                <Features gridItems={intro.blurbs} />
-                <div className="columns">
-                  <div className="column is-12 has-text-centered">
-                    <Link className="btn" to="/products">
-                      See all products
-                    </Link>
-                  </div>
-                </div>
-                <div className="column is-12">
-                  <h3 className="has-text-weight-semibold is-size-2">
-                    Latest stories
-                  </h3>
-                  <BlogRoll />
-                  <div className="column is-12 has-text-centered">
-                    <Link className="btn" to="/blog">
-                      Read more
-                    </Link>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  </div>
-)
+  );
+};
 
 IndexPageTemplate.propTypes = {
   image: PropTypes.oneOfType([PropTypes.object, PropTypes.string]),
@@ -122,12 +134,12 @@ IndexPageTemplate.propTypes = {
   mainpitch: PropTypes.object,
   description: PropTypes.string,
   intro: PropTypes.shape({
-    blurbs: PropTypes.array,
-  }),
-}
+    blurbs: PropTypes.array
+  })
+};
 
 const IndexPage = ({ data }) => {
-  const { frontmatter } = data.markdownRemark
+  const { frontmatter } = data.markdownRemark;
 
   return (
     <Layout>
@@ -141,18 +153,18 @@ const IndexPage = ({ data }) => {
         intro={frontmatter.intro}
       />
     </Layout>
-  )
-}
+  );
+};
 
 IndexPage.propTypes = {
   data: PropTypes.shape({
     markdownRemark: PropTypes.shape({
-      frontmatter: PropTypes.object,
-    }),
-  }),
-}
+      frontmatter: PropTypes.object
+    })
+  })
+};
 
-export default IndexPage
+export default IndexPage;
 
 export const pageQuery = graphql`
   query IndexPageTemplate {
@@ -190,4 +202,4 @@ export const pageQuery = graphql`
       }
     }
   }
-`
+`;

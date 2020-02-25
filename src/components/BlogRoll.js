@@ -1,70 +1,97 @@
-import React from 'react'
-import PropTypes from 'prop-types'
-import { Link, graphql, StaticQuery } from 'gatsby'
-import PreviewCompatibleImage from './PreviewCompatibleImage'
+import React from "react";
+import PropTypes from "prop-types";
+import { Link, graphql, StaticQuery } from "gatsby";
+import Container from "@material-ui/core/Container";
+import Grid from "@material-ui/core/Grid";
+import MUILink from "@material-ui/core/Link";
 
-class BlogRoll extends React.Component {
-  render() {
-    const { data } = this.props
-    const { edges: posts } = data.allMarkdownRemark
+import { makeStyles } from "@material-ui/core/styles";
+import Card from "@material-ui/core/Card";
+import CardActions from "@material-ui/core/CardActions";
+import CardContent from "@material-ui/core/CardContent";
+import CardMedia from "@material-ui/core/CardMedia";
+import Button from "@material-ui/core/Button";
+import Typography from "@material-ui/core/Typography";
+import grey from "@material-ui/core/colors/grey";
 
-    return (
-      <div className="columns is-multiline">
-        {posts &&
-          posts.map(({ node: post }) => (
-            <div className="is-parent column is-6" key={post.id}>
-              <article
-                className={`blog-list-item tile is-child box notification ${
-                  post.frontmatter.featuredpost ? 'is-featured' : ''
-                }`}
-              >
-                <header>
-                  {post.frontmatter.featuredimage ? (
-                    <div className="featured-thumbnail">
-                      <PreviewCompatibleImage
-                        imageInfo={{
-                          image: post.frontmatter.featuredimage,
-                          alt: `featured image thumbnail for post ${post.frontmatter.title}`,
-                        }}
-                      />
-                    </div>
-                  ) : null}
-                  <p className="post-meta">
-                    <Link
-                      className="title has-text-primary is-size-4"
-                      to={post.fields.slug}
-                    >
-                      {post.frontmatter.title}
-                    </Link>
-                    <span> &bull; </span>
-                    <span className="subtitle is-size-5 is-block">
-                      {post.frontmatter.date}
-                    </span>
-                  </p>
-                </header>
-                <p>
-                  {post.excerpt}
-                  <br />
-                  <br />
-                  <Link className="button" to={post.fields.slug}>
-                    Keep Reading →
-                  </Link>
-                </p>
-              </article>
-            </div>
-          ))}
-      </div>
-    )
+import PreviewCompatibleImage from "./PreviewCompatibleImage";
+
+const useStyles = makeStyles({
+  root: {
+    maxWidth: 345
+  },
+  media: {
+    height: 140,
+    overflow: "hidden",
+    backgroundColor: grey[200]
   }
-}
+});
+
+const BlogRoll = function(props) {
+  const { data } = props;
+  const { edges: posts } = data.allMarkdownRemark;
+  const classes = useStyles();
+
+  return (
+    <Container>
+      <Grid container spacing={3}>
+        {posts &&
+          posts.map(({ node: post, ...rest }, idx) => (
+            <Grid item xs={12} sm={6} md={4} key={post.id}>
+              <Card>
+                <CardMedia
+                  className={classes.media}
+                  title="Contemplative Reptile"
+                >
+                  {post.frontmatter.featuredimage ? (
+                    <PreviewCompatibleImage
+                      imageInfo={{
+                        image: post.frontmatter.featuredimage,
+                        alt: `featured image thumbnail for post ${post.frontmatter.title}`
+                      }}
+                    />
+                  ) : (
+                    <div />
+                  )}
+                </CardMedia>
+                <CardContent>
+                  <Typography gutterBottom variant="h5" component="h2">
+                    <MUILink component={Link} to={post.fields.slug}>
+                      {post.frontmatter.title}
+                    </MUILink>
+                  </Typography>
+                  <Typography variant="subtitle1" color="textSecondary">
+                    {post.frontmatter.date}
+                  </Typography>
+                  <Typography variant="body1" component="p">
+                    {post.excerpt}
+                  </Typography>
+                </CardContent>
+                <CardActions>
+                  <Button
+                    color="primary"
+                    variant="contained"
+                    component={Link}
+                    to={post.fields.slug}
+                  >
+                    Keep Reading
+                  </Button>
+                </CardActions>
+              </Card>
+            </Grid>
+          ))}
+      </Grid>
+    </Container>
+  );
+};
 
 BlogRoll.propTypes = {
   data: PropTypes.shape({
     allMarkdownRemark: PropTypes.shape({
-      edges: PropTypes.array,
-    }),
-  }),
-}
+      edges: PropTypes.array
+    })
+  })
+};
 
 export default () => (
   <StaticQuery
@@ -101,4 +128,4 @@ export default () => (
     `}
     render={(data, count) => <BlogRoll data={data} count={count} />}
   />
-)
+);

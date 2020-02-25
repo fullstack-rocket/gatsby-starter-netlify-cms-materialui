@@ -1,28 +1,33 @@
-import React from 'react'
-import PropTypes from 'prop-types'
-import { v4 } from 'uuid'
+import React from "react";
+import PropTypes from "prop-types";
+import { v4 } from "uuid";
+import Box from "@material-ui/core/Box";
 
 const Testimonials = ({ testimonials }) => (
   <div>
     {testimonials.map(testimonial => (
-      <article key={v4()} className="message">
-        <div className="message-body">
-          {testimonial.quote}
-          <br />
-          <cite> – {testimonial.author}</cite>
-        </div>
-      </article>
+      <Box
+        component="blockquote"
+        borderLeft={4}
+        borderColor="primary.main"
+        bgcolor="primary.50"
+        key={v4()}
+        p={2}
+      >
+        <p>{testimonial.quote}</p>
+        <footer> – {testimonial.author}</footer>
+      </Box>
     ))}
   </div>
-)
+);
 
 Testimonials.propTypes = {
   testimonials: PropTypes.arrayOf(
     PropTypes.shape({
       quote: PropTypes.string,
-      author: PropTypes.string,
+      author: PropTypes.string
     })
-  ),
-}
+  )
+};
 
-export default Testimonials
+export default Testimonials;

@@ -1,98 +1,153 @@
-import React from 'react'
-import { Link } from 'gatsby'
-import github from '../img/github-icon.svg'
-import logo from '../img/logo.svg'
+import React from "react";
+import { Link } from "gatsby";
+import AppBar from "@material-ui/core/AppBar";
+import Drawer from "@material-ui/core/Drawer";
+import Hidden from "@material-ui/core/Hidden";
+import IconButton from "@material-ui/core/IconButton";
+import Button from "@material-ui/core/Button";
+import List from "@material-ui/core/List";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemText from "@material-ui/core/ListItemText";
+import MenuIcon from "@material-ui/icons/Menu";
+import Toolbar from "@material-ui/core/Toolbar";
+import { makeStyles } from "@material-ui/core/styles";
+import MUILink from "@material-ui/core/Link";
 
-const Navbar = class extends React.Component {
-  constructor(props) {
-    super(props)
-    this.state = {
-      active: false,
-      navBarActiveClass: '',
+import logo from "../img/logo.svg";
+
+const drawerWidth = 240;
+
+const useStyles = makeStyles(theme => ({
+  root: {
+    display: "flex"
+  },
+  drawer: {
+    [theme.breakpoints.up("sm")]: {
+      width: drawerWidth,
+      flexShrink: 0
     }
-  }
-
-  toggleHamburger = () => {
-    // toggle the active boolean in the state
-    this.setState(
-      {
-        active: !this.state.active,
-      },
-      // after state has been updated,
-      () => {
-        // set the class in state for the navbar accordingly
-        this.state.active
-          ? this.setState({
-              navBarActiveClass: 'is-active',
-            })
-          : this.setState({
-              navBarActiveClass: '',
-            })
+  },
+  appBar: {
+    color: theme.palette.primary.dark,
+    backgroundColor: "white",
+    [theme.breakpoints.up("sm")]: {
+      width: `100%`
+    }
+  },
+  mainToolbar: {
+    "& a": {
+      color: theme.palette.primary.dark,
+      "&:hover": {
+        textDecoration: "none"
       }
-    )
+    },
+    [theme.breakpoints.down("sm")]: {
+      justifyContent: "space-between"
+    }
+  },
+  title: {
+    flexGrow: 1
+  },
+  menuButton: {
+    marginRight: theme.spacing(2),
+    [theme.breakpoints.up("sm")]: {
+      display: "none"
+    }
+  },
+  toolbar: theme.mixins.toolbar,
+  drawerPaper: {
+    width: drawerWidth
+  },
+  content: {
+    flexGrow: 1,
+    padding: theme.spacing(3)
   }
+}));
 
-  render() {
-    return (
-      <nav
-        className="navbar is-transparent"
-        role="navigation"
-        aria-label="main-navigation"
-      >
-        <div className="container">
-          <div className="navbar-brand">
-            <Link to="/" className="navbar-item" title="Logo">
-              <img src={logo} alt="Kaldi" style={{ width: '88px' }} />
-            </Link>
-            {/* Hamburger menu */}
-            <div
-              className={`navbar-burger burger ${this.state.navBarActiveClass}`}
-              data-target="navMenu"
-              onClick={() => this.toggleHamburger()}
+const items = [
+  { path: "/about", label: "About" },
+  { path: "/products", label: "Products" },
+  { path: "/blog", label: "Blog" },
+  { path: "/contact", label: "Contact" },
+  { path: "/contact/examples", label: "Form Examples" }
+];
+
+export default function NavBarComponent(props) {
+  const { container } = props;
+  const classes = useStyles();
+  const [mobileOpen, setMobileOpen] = React.useState(false);
+
+  const handleDrawerToggle = () => {
+    setMobileOpen(!mobileOpen);
+  };
+
+  const drawer = (
+    <div>
+      <div className={classes.toolbar} />
+      <List>
+        {items.map(item => (
+          <ListItem button key={item.path}>
+            <MUILink component={Link} to={item.path}>
+              <ListItemText primary={item.label} />
+            </MUILink>
+          </ListItem>
+        ))}
+      </List>
+    </div>
+  );
+
+  return (
+    <>
+      <AppBar position="fixed" className={classes.appBar}>
+        <Toolbar className={classes.mainToolbar}>
+          <Link to="/">
+            <img
+              src={logo}
+              alt="Kaldi"
+              style={{ width: "88px", marginRight: "20px" }}
+            />
+          </Link>
+          <Hidden smDown implementation="css">
+            {items.map(item => (
+              <Button color="inherit" key={item.path}>
+                <MUILink component={Link} to={item.path}>
+                  <ListItemText primary={item.label} />
+                </MUILink>
+              </Button>
+            ))}
+          </Hidden>
+          <Hidden mdUp implementation="css">
+            <IconButton
+              color="inherit"
+              aria-label="open drawer"
+              edge="end"
+              onClick={handleDrawerToggle}
             >
-              <span />
-              <span />
-              <span />
-            </div>
-          </div>
-          <div
-            id="navMenu"
-            className={`navbar-menu ${this.state.navBarActiveClass}`}
+              <MenuIcon />
+            </IconButton>
+          </Hidden>
+        </Toolbar>
+      </AppBar>
+      <nav className={classes.drawer} aria-label="mailbox folders">
+        {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
+        <Hidden smUp implementation="css">
+          <Drawer
+            container={container}
+            variant="temporary"
+            anchor={"right"}
+            open={mobileOpen}
+            onClose={handleDrawerToggle}
+            classes={{
+              paper: classes.drawerPaper
+            }}
+            ModalProps={{
+              keepMounted: true // Better open performance on mobile.
+            }}
           >
-            <div className="navbar-start has-text-centered">
-              <Link className="navbar-item" to="/about">
-                About
-              </Link>
-              <Link className="navbar-item" to="/products">
-                Products
-              </Link>
-              <Link className="navbar-item" to="/blog">
-                Blog
-              </Link>
-              <Link className="navbar-item" to="/contact">
-                Contact
-              </Link>
-              <Link className="navbar-item" to="/contact/examples">
-                Form Examples
-              </Link>
-            </div>
-            <div className="navbar-end has-text-centered">
-              <a
-                className="navbar-item"
-                href="https://github.com/netlify-templates/gatsby-starter-netlify-cms"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <span className="icon">
-                  <img src={github} alt="Github" />
-                </span>
-              </a>
-            </div>
-          </div>
-        </div>
+            {drawer}
+          </Drawer>
+        </Hidden>
       </nav>
-    )
-  }
+    </>
+  );
 }
-
-export default Navbar
